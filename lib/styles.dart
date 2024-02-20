@@ -26,6 +26,11 @@ abstract class ThemeText {
       fontSize: 20,
       height: 0.5,
       fontWeight: FontWeight.w600);
+  static const TextStyle headline5 = TextStyle(
+      fontFamily: 'Montserrat',
+      color: Colors.red,
+      fontSize: 16,
+      fontWeight: FontWeight.w500);
   static const TextStyle buttonText = TextStyle(
       fontFamily: 'Montserrat',
       color: Colors.white,
@@ -39,7 +44,7 @@ abstract class ThemeText {
   static const TextStyle LisTextTitle =
       TextStyle(fontFamily: 'cairo', fontWeight: FontWeight.w400);
   static const TextStyle textBody =
-      TextStyle(fontFamily: 'cairo', fontWeight: FontWeight.w400);
+      TextStyle(fontFamily: 'cairo', fontWeight: FontWeight.w400 , color: Colors.black,);
   static const TextStyle textBody2 = TextStyle(
       fontFamily: 'cairo',
       fontSize: 16,

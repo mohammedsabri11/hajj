@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-
 import 'package:flutter_localizations/flutter_localizations.dart';
-
 import 'package:google_fonts/google_fonts.dart';
 import 'package:safe_hajj_app/styles.dart';
 import 'CustomElevatedButton.dart';
 import 'login.dart';
-import 'pilgram_home.dart';
+import 'paramedic/notification_service.dart';
+import 'pilgram/pilgram_home.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await NotificationService().init(); //
+  //await NotificationService()
+  //   . //
+
+  await NotificationService().requestPermissions();
   runApp(MyApp());
 }
 
@@ -30,7 +35,7 @@ class MyApp extends StatelessWidget {
       ],
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        appBarTheme: AppBarTheme(
+        appBarTheme: const AppBarTheme(
           // Set your desired style for AppBar here
           // For example, you can set the background color and text color
 
@@ -38,7 +43,7 @@ class MyApp extends StatelessWidget {
           backgroundColor: Colors.green,
         ),
       ),
-      home: HomePage(),
+      home: const HomePage(),
     );
   }
 }
@@ -48,6 +53,7 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    NotificationService().showNotification();
     return Scaffold(
         backgroundColor: Colors.white,
         body: SingleChildScrollView(
@@ -124,8 +130,10 @@ class HomePage extends StatelessWidget {
           children: [
             CustomElevatedButton(
               onPressed: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => PilgramHomePage()));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const PilgramHomePage()));
               },
               child: Text(
                 AppLocalizations.of(context)!.pilgram,

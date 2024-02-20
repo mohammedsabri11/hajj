@@ -1,20 +1,27 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 //import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
-import 'Paramedic.dart';
+import 'paramedic/Paramedic.dart';
 import 'styles.dart';
+
+
 
 class LoginPage extends StatelessWidget {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
   LoginPage({super.key});
+  @override
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
@@ -117,13 +124,14 @@ class LoginPage extends StatelessWidget {
             ),
             child: ElevatedButton(
               onPressed: () {
-                //   final email = emailController.text;
-                //  final password = passwordController.text;
-                // login(context, email, password);
+                final email = emailController.text;
+                final password = passwordController.text;
+
+               //login(context, email, password);
                 Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const ParamedicHomePage()));
+                   context,
+                   MaterialPageRoute(
+                       builder: (context) => const ParamedicHomePage()));
               },
               style: ElevatedButton.styleFrom(
                 shape: const StadiumBorder(),
@@ -150,28 +158,41 @@ class LoginPage extends StatelessWidget {
   }
 
   Future<void> login(context, String email, String password) async {
-    showLoaderDialog(context);
-    final url = Uri.parse('http://10.0.2.2/HajjPhpProject/UserMain.php');
+    showLoaderDialog(context); //10.0.2.2
+    final url = Uri.parse('http://172.19.16.47:8000/paramedic/login/' +
+        email +
+        '/' +
+        password +
+        '/');
     try {
-      final response = await http.post(
+      var response = await http.get(
         url,
-        body: {'email': email, 'password': password, 'op': "login"},
       );
-      print(response);
+
       if (response.statusCode == 200) {
         // Successful login
-        Navigator.pop(context);
-        print('Login successful');
-        print(response.body);
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => const ParamedicHomePage()));
+        final Map data = json.decode(response.body);
+        //Map<String, dynamic> data = jsonDecode(response.body);
+        //_showErrorDialog(context, data["msg"], response.body);
+        //print(data);
+        if (data["status"] == true)
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const ParamedicHomePage()));
+        else
+          _showErrorDialog(context, "خطا ", data["msg"]);
+        //Navigator.pop(context);
+        // print('Login successful');
+        //print(response.body);
       } else {
         // Failed login
-        print('Login failed');
+        //  print('Login failed');
         //if (!context.) return;
 
-        _showErrorDialog(context, 'خطا في تسجيل الدخول', response.body);
-        print(response.body);
+        _showErrorDialog(
+            context, 'خطا في تسجيل الدخول', "لايوجد اتصال بالسيرفر");
+        //print(response.body);
       }
     } catch (e) {
       _showErrorDialog(context, 'فشلت العملية', e.toString());
@@ -202,7 +223,7 @@ class LoginPage extends StatelessWidget {
 
   showLoaderDialog(BuildContext context) {
     AlertDialog alert = AlertDialog(
-      content: new Row(
+      content: Row(
         children: [
           CircularProgressIndicator(),
           Container(
@@ -252,13 +273,15 @@ class PlaceholderDialog extends StatelessWidget {
               title!,
               textAlign: TextAlign.center,
             ),
-      titleTextStyle: ThemeText.headline2,
+      titleTextStyle: ThemeText.headline5,
       content: message == null
           ? null
-          : Text(
-              message!,
-              textAlign: TextAlign.center,
-            ),
+          : Container(
+              margin: EdgeInsets.only(top: 7),
+              child: Text(
+                message!,
+                textAlign: TextAlign.center,
+              )),
       contentTextStyle: ThemeText.textBody,
       actionsAlignment: MainAxisAlignment.center,
       actionsOverflowButtonSpacing: 8.0,
